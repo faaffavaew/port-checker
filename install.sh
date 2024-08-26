@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Variables
-REPO_URL="https://raw.githubusercontent.com/myusername/myrepo/main/main.py"
+REPO_URL="https://raw.githubusercontent.com/justusmisha/port-checker/main/main.py"
 INSTALL_DIR="/opt/ports_checker"
 SERVICE_FILE="/etc/systemd/system/ports_checker.service"
-COMMAND_PATH="/usr/local/bin/myapp"
+COMMAND_PATH="/usr/local/bin/ports_checker"
 
 # Update package list and install prerequisites
 echo "Updating package list and installing prerequisites..."
