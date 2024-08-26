@@ -47,7 +47,7 @@ After=network.target
 [Service]
 User=$USER
 WorkingDirectory=$APP_DIR
-ExecStart=/usr/local/bin/uvicorn $APP_NAME:app --host 0.0.0.0 --port 8000
+ExecStart=/usr/local/bin/uvicorn $APP_NAME:app --host localhost --port 54172
 Restart=always
 
 [Install]
