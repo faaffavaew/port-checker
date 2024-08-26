@@ -8,14 +8,14 @@ app = FastAPI()
 # Async function to get the number of connected users on a given port
 async def get_connected_users(port: int) -> int:
     proc = await asyncio.create_subprocess_shell(
-        f"sudo ss -Hn sport = :{port} | wc -l",
+        f"sudo netstat -tnp | grep ':{port}'",
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
     stdout, stderr = await proc.communicate()
     if proc.returncode != 0:
         raise Exception(f"Error: {stderr.decode().strip()}")
-    return int(stdout.decode().strip())
+    return stdout.decode()
 
 # FastAPI route to check the number of connected users on a port
 @app.get("/get_usage")
