@@ -13,8 +13,9 @@ async def get_connected_users(port: int) -> int:
         stderr=subprocess.PIPE
     )
     stdout, stderr = await proc.communicate()
+    print(stdout.decode())
     if proc.returncode != 0:
-        raise Exception(f"Error: {stderr.decode().strip()}")
+        raise Exception(f"Error: {stderr.decode()}")
     return stdout.decode()
 
 # FastAPI route to check the number of connected users on a port
