@@ -15,7 +15,8 @@ async def get_connected_users(port: int) -> int:
     stdout, stderr = await proc.communicate()
     
     if proc.returncode != 0:
-        raise Exception(f"Error executing command: {command}\n{stderr}")
+        print(f"No connections found on port {port}.")
+        return 0
 
     # Decode the output and split it into lines
     lines = stdout.decode().splitlines()
