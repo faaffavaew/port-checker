@@ -71,4 +71,4 @@ python3 $INSTALL_DIR/main.py \"\$@\"
 " | sudo tee $COMMAND_PATH > /dev/null
 sudo chmod +x $COMMAND_PATH
 
-echo "Installation complete. You can now use the 'myapp' command and the Ports Checker service is running."
+echo "Installation complete. You can now use the 'ports_checker' command and the Ports Checker service is running."
