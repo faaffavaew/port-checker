@@ -30,7 +30,7 @@ After=network.target
 [Service]
 User=$USER
 WorkingDirectory=/opt/ports_checker
-ExecStart=/opt/ports_checker/venv/bin/uvicorn ports_checker:app --host 0.0.0.0 --port 54172
+ExecStart=/opt/ports_checker/venv/bin/uvicorn ports_checker:app --host 127.0.0.1 --port 54172
 Restart=always
 
 [Install]
