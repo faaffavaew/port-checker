@@ -26,9 +26,9 @@ pip install --upgrade pip
 pip install fastapi uvicorn
 
 # Copy the application files (adjust paths as needed)
-# Assuming the script is in the same directory as the source code
+# Make sure to copy from the directory where install.sh is located
 sudo mkdir -p /opt/ports_checker
-sudo cp -r . /opt/ports_checker/
+sudo cp -r /path/to/your/application/* /opt/ports_checker/
 
 # Create a systemd service file
 SERVICE_FILE=/etc/systemd/system/ports_checker.service
