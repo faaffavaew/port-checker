@@ -2,10 +2,21 @@
 
 # Update package list and install prerequisites
 sudo apt-get update
-sudo apt-get install -y curl python3 python3-pip python3-venv
+sudo apt-get install -y curl software-properties-common
 
-# Create a virtual environment
-python3 -m venv /opt/ports_checker/venv
+# Add the deadsnakes PPA for Python 3.10
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get update
+
+# Install Python 3.10 and pip
+sudo apt-get install -y python3.10 python3.10-venv python3.10-distutils
+
+# Install pip for Python 3.10
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+sudo python3.10 get-pip.py
+
+# Create a virtual environment with Python 3.10
+python3.10 -m venv /opt/ports_checker/venv
 
 # Activate the virtual environment
 source /opt/ports_checker/venv/bin/activate
@@ -30,7 +41,7 @@ After=network.target
 [Service]
 User=$USER
 WorkingDirectory=/opt/ports_checker
-ExecStart=/opt/ports_checker/venv/bin/uvicorn ports_checker:app --host 127.0.0.1 --port 54172
+ExecStart=/opt/ports_checker/venv/bin/uvicorn ports_checker:app --host 0.0.0.0 --port 54172
 Restart=always
 
 [Install]
@@ -42,4 +53,4 @@ sudo systemctl daemon-reload
 sudo systemctl start ports_checker
 sudo systemctl enable ports_checker
 
-echo "Ports Checker application is now installed and running."
+echo "Ports Checker application is now installed and running with Python 3.10."
