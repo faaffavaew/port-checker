@@ -6,18 +6,24 @@ from fastapi import FastAPI
 app = FastAPI()
 
 async def get_connected_users(port: int) -> int:
+    command = f"sudo netstat -tnp | grep ':{port}'"
     proc = await asyncio.create_subprocess_shell(
-        f"sudo netstat -tnp | grep ':{port}'",
+        command,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
     stdout, stderr = await proc.communicate()
     
     if proc.returncode != 0:
-        raise Exception(f"Error: {stderr.decode()}")
-    
+        raise Exception(f"Error executing command: {command}\n{stderr}")
+
     # Decode the output and split it into lines
     lines = stdout.decode().splitlines()
+
+    # If no lines are found, log that no connections were found
+    if not lines:
+        print(f"No connections found on port {port}.")
+        return 0
     
     # Extract unique IP addresses
     ip_addresses = set()
@@ -27,7 +33,7 @@ async def get_connected_users(port: int) -> int:
         if len(parts) > 4:
             remote_ip = parts[4].split(':')[0]
             ip_addresses.add(remote_ip)
-    
+
     return len(ip_addresses)
 
 # FastAPI route to check the number of connected users on a port
