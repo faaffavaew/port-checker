@@ -19,9 +19,20 @@ async def get_connected_users(port: int) -> int:
 
 # FastAPI route to check the number of connected users on a port
 @app.get("/get_usage")
-async def check_port(port: int):
-    connected_users = await get_connected_users(port)
-    return {"port": port, "connected_users": connected_users}
+async def check_port(v: int=None, sh: int=None):
+    if v and sh:
+        connected_users_v = await get_connected_users(v)
+        connected_users_sh = await get_connected_users(sh)
+        return {v: connected_users_v,
+               sh: connected_users_sh}
+    elif v and not sh:
+        connected_users_v = await get_connected_users(v)
+        return {v: connected_users_v}
+    elif sh and not sh:
+        connected_users_sh = await get_connected_users(sh)
+        return {sh: connected_users_sh}
+    else:
+        return {'message': 'specify port'}
 
 # Main function to handle command-line arguments
 def main():
