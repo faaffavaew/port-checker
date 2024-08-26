@@ -18,7 +18,7 @@ async def get_connected_users(port: int) -> int:
     return int(stdout.decode().strip())
 
 # FastAPI route to check the number of connected users on a port
-@app.get("/check_port")
+@app.get("/get_usage")
 async def check_port(port: int):
     connected_users = await get_connected_users(port)
     return {"port": port, "connected_users": connected_users}
