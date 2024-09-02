@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  ports_checker:
+    build: .
+    ports:
+      - "54172:54172"
+    volumes:
+      - .:/opt/ports_checker
+    restart: always
