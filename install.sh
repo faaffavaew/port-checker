@@ -67,8 +67,11 @@ if [ ! -f "$MAIN_PY_PATH" ]; then
     exit 1
 fi
 
-# Build and run the Docker container using Docker Compose
+
 echo "Building and running Docker container..."
-docker-compose up --build
+docker-compose down
+
+echo "Building and running Docker container..."
+docker-compose up -b
 
 echo "Docker container is running. You can access the Ports Checker application at http://localhost:54172"
