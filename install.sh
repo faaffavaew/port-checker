@@ -25,6 +25,8 @@ if ! command -v docker &> /dev/null; then
 
     # Add the current user to the docker group
     sudo usermod -aG docker $USER
+    echo "Please log out and log back in to apply Docker group changes."
+    exit 0
 fi
 
 # Check if Docker Compose is installed; if not, install Docker Compose
@@ -58,6 +60,12 @@ fi
 # Download the main.py file
 echo "Downloading main.py..."
 curl -sSL "$REPO_URL" -o "$MAIN_PY_PATH"
+
+# Verify main.py exists
+if [ ! -f "$MAIN_PY_PATH" ]; then
+    echo "Error: $MAIN_PY_PATH not found. Please ensure the main.py file is present."
+    exit 1
+fi
 
 # Build and run the Docker container using Docker Compose
 echo "Building and running Docker container..."
