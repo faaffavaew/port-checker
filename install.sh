@@ -72,6 +72,6 @@ echo "Stoping..."
 docker-compose down
 
 echo "Building and running Docker container..."
-docker-compose up -b
+docker-compose up --build
 
 echo "Docker container is running. You can access the Ports Checker application at http://localhost:54172"
