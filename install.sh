@@ -8,7 +8,7 @@ MAIN_PY_PATH="./main.py"
 DOCKER_COMPOSE_PATH="./docker-compose.yml"
 DOCKERFILE_PATH="./Dockerfile"
 
-Check if Docker is installed; if not, install Docker
+
 if ! command -v docker &> /dev/null; then
     echo "Docker not found. Installing Docker..."
     sudo apt-get update
