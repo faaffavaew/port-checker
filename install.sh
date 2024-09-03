@@ -37,6 +37,18 @@ fi
 echo "Downloading main.py..."
 curl -sSL "$REPO_URL" -o "$MAIN_PY_PATH"
 
+# Verify Docker Compose configuration file exists
+if [ ! -f "$DOCKER_COMPOSE_PATH" ]; then
+    echo "Error: $DOCKER_COMPOSE_PATH not found. Please ensure the docker-compose.yml file is present."
+    exit 1
+fi
+
+# Verify Dockerfile exists
+if [ ! -f "$DOCKERFILE_PATH" ]; then
+    echo "Error: $DOCKERFILE_PATH not found. Please ensure the Dockerfile is present."
+    exit 1
+fi
+
 # Build and run the Docker container using Docker Compose
 echo "Building and running Docker container..."
 docker-compose up --build
