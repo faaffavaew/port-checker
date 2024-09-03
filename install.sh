@@ -2,11 +2,13 @@
 
 # Variables
 REPO_URL="https://raw.githubusercontent.com/justusmisha/port-checker/main/main.py"
-DOCKERFILE_PATH="./Dockerfile"
-DOCKER_COMPOSE_PATH="./docker-compose.yml"
+DOCKER_COMPOSE_URL="https://raw.githubusercontent.com/justusmisha/port-checker/main/docker-compose.yml"
+DOCKERFILE_URL="https://raw.githubusercontent.com/justusmisha/port-checker/main/Dockerfile"
 MAIN_PY_PATH="./main.py"
+DOCKER_COMPOSE_PATH="./docker-compose.yml"
+DOCKERFILE_PATH="./Dockerfile"
 
-# Check if Docker is installed; if not, install Docker
+
 if ! command -v docker &> /dev/null; then
     echo "Docker not found. Installing Docker..."
     sudo apt-get update
@@ -23,6 +25,8 @@ if ! command -v docker &> /dev/null; then
 
     # Add the current user to the docker group
     sudo usermod -aG docker $USER
+    echo "Please log out and log back in to apply Docker group changes."
+    exit 0
 fi
 
 # Check if Docker Compose is installed; if not, install Docker Compose
@@ -33,9 +37,9 @@ if ! command -v docker-compose &> /dev/null; then
     sudo chmod +x /usr/local/bin/docker-compose
 fi
 
-# Download the main.py file
-echo "Downloading main.py..."
-curl -sSL "$REPO_URL" -o "$MAIN_PY_PATH"
+# Download Docker Compose configuration file
+echo "Downloading docker-compose.yml..."
+curl -sSL "$DOCKER_COMPOSE_URL" -o "$DOCKER_COMPOSE_PATH"
 
 # Verify Docker Compose configuration file exists
 if [ ! -f "$DOCKER_COMPOSE_PATH" ]; then
@@ -43,14 +47,31 @@ if [ ! -f "$DOCKER_COMPOSE_PATH" ]; then
     exit 1
 fi
 
+# Download Dockerfile
+echo "Downloading Dockerfile..."
+curl -sSL "$DOCKERFILE_URL" -o "$DOCKERFILE_PATH"
+
 # Verify Dockerfile exists
 if [ ! -f "$DOCKERFILE_PATH" ]; then
     echo "Error: $DOCKERFILE_PATH not found. Please ensure the Dockerfile is present."
     exit 1
 fi
 
-# Build and run the Docker container using Docker Compose
+# Download the main.py file
+echo "Downloading main.py..."
+curl -sSL "$REPO_URL" -o "$MAIN_PY_PATH"
+
+# Verify main.py exists
+if [ ! -f "$MAIN_PY_PATH" ]; then
+    echo "Error: $MAIN_PY_PATH not found. Please ensure the main.py file is present."
+    exit 1
+fi
+
+
+echo "Stoping..."
+docker-compose down
+
 echo "Building and running Docker container..."
-docker-compose up --build
+docker-compose up -b
 
 echo "Docker container is running. You can access the Ports Checker application at http://localhost:54172"
