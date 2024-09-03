@@ -1,9 +1,14 @@
 import argparse
 import asyncio
 import subprocess
-from fastapi import FastAPI
+import os
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException
+
+load_dotenv()
 
 app = FastAPI()
+
 
 async def get_connected_users(port: int) -> int:
     command = f"sudo netstat -tnp | grep ':{port}'"
@@ -13,7 +18,7 @@ async def get_connected_users(port: int) -> int:
         stderr=subprocess.PIPE
     )
     stdout, stderr = await proc.communicate()
-    
+
     if proc.returncode != 0:
         print(f"No connections found on port {port}.")
         return 0
@@ -25,7 +30,7 @@ async def get_connected_users(port: int) -> int:
     if not lines:
         print(f"No connections found on port {port}.")
         return 0
-    
+
     # Extract unique IP addresses
     ip_addresses = set()
     for line in lines:
@@ -37,22 +42,30 @@ async def get_connected_users(port: int) -> int:
 
     return len(ip_addresses)
 
-# FastAPI route to check the number of connected users on a port
+
 @app.get("/get_usage")
-async def check_port(v: int=None, sh: int=None):
-    if v and sh:
-        connected_users_v = await get_connected_users(v)
-        connected_users_sh = await get_connected_users(sh)
-        return {v: connected_users_v,
-               sh: connected_users_sh}
-    elif v and not sh:
-        connected_users_v = await get_connected_users(v)
-        return {v: connected_users_v}
-    elif sh and not sh:
-        connected_users_sh = await get_connected_users(sh)
-        return {sh: connected_users_sh}
-    else:
-        return {'message': 'specify port'}
+async def check_port(key: int, v: int = None, sh: int = None):
+    secretkey = str(os.getenv("SECRETKEY"))
+    try:
+        if key == secretkey:
+            if v and sh:
+                connected_users_v = await get_connected_users(v)
+                connected_users_sh = await get_connected_users(sh)
+                return {v: connected_users_v,
+                        sh: connected_users_sh}
+            elif v and not sh:
+                connected_users_v = await get_connected_users(v)
+                return {v: connected_users_v}
+            elif sh and not sh:
+                connected_users_sh = await get_connected_users(sh)
+                return {sh: connected_users_sh}
+            else:
+                return {'message': 'specify port'}
+        else:
+            raise HTTPException(status_code=403)
+    except Exception as e:
+        return {'error': str(e)}
+
 
 # Main function to handle command-line arguments
 def main():
@@ -73,6 +86,7 @@ def main():
     print(f"Checking Shadowsocks port {shadowsocks_port}...")
     shadowsocks_users = asyncio.run(get_connected_users(shadowsocks_port))
     print(f"Number of users connected to Shadowsocks port {shadowsocks_port}: {shadowsocks_users}")
+
 
 if __name__ == "__main__":
     main()
