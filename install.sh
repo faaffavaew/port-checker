@@ -68,7 +68,7 @@ if [ ! -f "$MAIN_PY_PATH" ]; then
 fi
 
 
-echo "Building and running Docker container..."
+echo "Stoping..."
 docker-compose down
 
 echo "Building and running Docker container..."
