@@ -3,7 +3,7 @@
 # Variables
 REPO_URL="https://raw.githubusercontent.com/justusmisha/port-checker/main/main.py"
 DOCKERFILE_PATH="./Dockerfile"
-DOCKER_COMPOSE_PATH="./docker-compose.yml"
+DOCKER_COMPOSE_PATH="/docker-compose.yml"
 MAIN_PY_PATH="./main.py"
 
 # Check if Docker is installed; if not, install Docker
