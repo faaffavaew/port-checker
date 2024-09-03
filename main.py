@@ -54,10 +54,10 @@ async def check_port(key: int, v: int = None, sh: int = None):
             connected_users_sh = await get_connected_users(sh)
             return {v: connected_users_v,
                     sh: connected_users_sh}
-        elif v and not sh:
+        elif v and sh is None:
             connected_users_v = await get_connected_users(v)
             return {v: connected_users_v}
-        elif sh and not sh:
+        elif sh and v is None:
             connected_users_sh = await get_connected_users(sh)
             return {sh: connected_users_sh}
         else:
