@@ -47,22 +47,22 @@ async def get_connected_users(port: int) -> int:
 async def check_port(key: int, v: int = None, sh: int = None):
     secretkey = str(os.getenv("SECRETKEY"))
     try:
-        if key == secretkey:
-            if v and sh:
-                connected_users_v = await get_connected_users(v)
-                connected_users_sh = await get_connected_users(sh)
-                return {v: connected_users_v,
-                        sh: connected_users_sh}
-            elif v and not sh:
-                connected_users_v = await get_connected_users(v)
-                return {v: connected_users_v}
-            elif sh and not sh:
-                connected_users_sh = await get_connected_users(sh)
-                return {sh: connected_users_sh}
-            else:
-                return {'message': 'specify port'}
-        else:
+        if not key or key != secretkey:
             raise HTTPException(status_code=403)
+        if v and sh:
+            connected_users_v = await get_connected_users(v)
+            connected_users_sh = await get_connected_users(sh)
+            return {v: connected_users_v,
+                    sh: connected_users_sh}
+        elif v and not sh:
+            connected_users_v = await get_connected_users(v)
+            return {v: connected_users_v}
+        elif sh and not sh:
+            connected_users_sh = await get_connected_users(sh)
+            return {sh: connected_users_sh}
+        else:
+            return {'message': 'specify port'}
+
     except Exception as e:
         return {'error': str(e)}
 
