@@ -2,9 +2,11 @@
 
 # Variables
 REPO_URL="https://raw.githubusercontent.com/justusmisha/port-checker/main/main.py"
-DOCKERFILE_PATH="./Dockerfile"
-DOCKER_COMPOSE_PATH="/docker-compose.yml"
+DOCKER_COMPOSE_URL="https://raw.githubusercontent.com/justusmisha/port-checker/main/docker-compose.yml"
+DOCKERFILE_URL="https://raw.githubusercontent.com/justusmisha/port-checker/main/Dockerfile"
 MAIN_PY_PATH="./main.py"
+DOCKER_COMPOSE_PATH="./docker-compose.yml"
+DOCKERFILE_PATH="./Dockerfile"
 
 # Check if Docker is installed; if not, install Docker
 if ! command -v docker &> /dev/null; then
@@ -36,6 +38,14 @@ fi
 # Download the main.py file
 echo "Downloading main.py..."
 curl -sSL "$REPO_URL" -o "$MAIN_PY_PATH"
+
+# Download Docker Compose configuration file
+echo "Downloading docker-compose.yml..."
+curl -sSL "$DOCKER_COMPOSE_URL" -o "$DOCKER_COMPOSE_PATH"
+
+# Download Dockerfile
+echo "Downloading Dockerfile..."
+curl -sSL "$DOCKERFILE_URL" -o "$DOCKERFILE_PATH"
 
 # Verify Docker Compose configuration file exists
 if [ ! -f "$DOCKER_COMPOSE_PATH" ]; then
