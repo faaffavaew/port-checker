@@ -9,33 +9,33 @@ DOCKER_COMPOSE_PATH="./docker-compose.yml"
 DOCKERFILE_PATH="./Dockerfile"
 
 # Check if Docker is installed; if not, install Docker
-if ! command -v docker &> /dev/null; then
-    echo "Docker not found. Installing Docker..."
-    sudo apt-get update
-    sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
+# if ! command -v docker &> /dev/null; then
+#     echo "Docker not found. Installing Docker..."
+#     sudo apt-get update
+#     sudo apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
 
-    # Add Docker's official GPG key
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+#     # Add Docker's official GPG key
+#     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 
-    # Set up the Docker repository
-    echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+#     # Set up the Docker repository
+#     echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-    sudo apt-get update
-    sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+#     sudo apt-get update
+#     sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
-    # Add the current user to the docker group
-    sudo usermod -aG docker $USER
-    echo "Please log out and log back in to apply Docker group changes."
-    exit 0
-fi
+#     # Add the current user to the docker group
+#     sudo usermod -aG docker $USER
+#     echo "Please log out and log back in to apply Docker group changes."
+#     exit 0
+# fi
 
-# Check if Docker Compose is installed; if not, install Docker Compose
-if ! command -v docker-compose &> /dev/null; then
-    echo "Docker Compose not found. Installing Docker Compose..."
-    DOCKER_COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d\" -f4)
-    sudo curl -L "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    sudo chmod +x /usr/local/bin/docker-compose
-fi
+# # Check if Docker Compose is installed; if not, install Docker Compose
+# if ! command -v docker-compose &> /dev/null; then
+#     echo "Docker Compose not found. Installing Docker Compose..."
+#     DOCKER_COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d\" -f4)
+#     sudo curl -L "https://github.com/docker/compose/releases/download/$DOCKER_COMPOSE_VERSION/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+#     sudo chmod +x /usr/local/bin/docker-compose
+# fi
 
 # Download Docker Compose configuration file
 echo "Downloading docker-compose.yml..."
