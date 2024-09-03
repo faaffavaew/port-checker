@@ -35,17 +35,9 @@ if ! command -v docker-compose &> /dev/null; then
     sudo chmod +x /usr/local/bin/docker-compose
 fi
 
-# Download the main.py file
-echo "Downloading main.py..."
-curl -sSL "$REPO_URL" -o "$MAIN_PY_PATH"
-
 # Download Docker Compose configuration file
 echo "Downloading docker-compose.yml..."
 curl -sSL "$DOCKER_COMPOSE_URL" -o "$DOCKER_COMPOSE_PATH"
-
-# Download Dockerfile
-echo "Downloading Dockerfile..."
-curl -sSL "$DOCKERFILE_URL" -o "$DOCKERFILE_PATH"
 
 # Verify Docker Compose configuration file exists
 if [ ! -f "$DOCKER_COMPOSE_PATH" ]; then
@@ -53,11 +45,19 @@ if [ ! -f "$DOCKER_COMPOSE_PATH" ]; then
     exit 1
 fi
 
+# Download Dockerfile
+echo "Downloading Dockerfile..."
+curl -sSL "$DOCKERFILE_URL" -o "$DOCKERFILE_PATH"
+
 # Verify Dockerfile exists
 if [ ! -f "$DOCKERFILE_PATH" ]; then
     echo "Error: $DOCKERFILE_PATH not found. Please ensure the Dockerfile is present."
     exit 1
 fi
+
+# Download the main.py file
+echo "Downloading main.py..."
+curl -sSL "$REPO_URL" -o "$MAIN_PY_PATH"
 
 # Build and run the Docker container using Docker Compose
 echo "Building and running Docker container..."
