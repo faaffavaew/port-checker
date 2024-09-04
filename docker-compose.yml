@@ -1,10 +1,11 @@
 version: '3.8'
 
 services:
-  ports_checker:
-    build: .
+  fastapi_app:
+    build:
+      dockerfile: Dockerfile
     ports:
       - "54172:54172"
-    volumes:
-      - .:/opt/ports_checker
+    env_file:
+      - .env
     restart: always

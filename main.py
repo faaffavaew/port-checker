@@ -1,13 +1,18 @@
-import argparse
 import asyncio
 import subprocess
 import os
+
+import uvicorn
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status
 
 load_dotenv()
 
-app = FastAPI()
+app = FastAPI(docs_url=None, redoc_url=None)
+
+SECRET_KEY = str(os.getenv("SECRET_KEY"))
+SS_PORT = int(os.getenv("SS_PORT"))
+VLESS_PORT = int(os.getenv("VLESS_PORT"))
 
 
 async def get_connected_users(port: int) -> int:
@@ -43,50 +48,28 @@ async def get_connected_users(port: int) -> int:
     return len(ip_addresses)
 
 
-@app.get("/get_usage")
-async def check_port(key: int, v: int = None, sh: int = None):
-    secretkey = str(os.getenv("SECRETKEY"))
+@app.get("/get_usage/{key}")
+async def check_port(key: str):
+    if not key or key != SECRET_KEY:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid secret key.")
     try:
-        if not key or key != secretkey:
-            raise HTTPException(status_code=403)
-        if v and sh:
-            connected_users_v = await get_connected_users(v)
-            connected_users_sh = await get_connected_users(sh)
-            return {v: connected_users_v,
-                    sh: connected_users_sh}
-        elif v and sh is None:
-            connected_users_v = await get_connected_users(v)
-            return {v: connected_users_v}
-        elif sh and v is None:
-            connected_users_sh = await get_connected_users(sh)
-            return {sh: connected_users_sh}
-        else:
-            return {'message': 'specify port'}
+        response = {}
 
+        if VLESS_PORT:
+            connected_users_v = await get_connected_users(VLESS_PORT)
+            response[str(VLESS_PORT)] = connected_users_v
+
+        if SS_PORT:
+            connected_users_sh = await get_connected_users(SS_PORT)
+            response[str(SS_PORT)] = connected_users_sh
+
+        if not response:
+            return {'message': 'Specify valid ports.'}
+
+        return response
     except Exception as e:
-        return {'error': str(e)}
-
-
-# Main function to handle command-line arguments
-def main():
-    parser = argparse.ArgumentParser(description="Port Checker Program")
-    parser.add_argument('-v', '--vless', type=int, help='vless port')
-    parser.add_argument('-sh', '--shadowsocks', type=int, help='shadowsocks port')
-
-    args = parser.parse_args()
-
-    # Set default port values if not provided
-    vless_port = args.vless if args.vless is not None else 8443
-    shadowsocks_port = args.shadowsocks if args.shadowsocks is not None else 1080
-
-    print(f"Checking VLESS port {vless_port}...")
-    vless_users = asyncio.run(get_connected_users(vless_port))
-    print(f"Number of users connected to VLESS port {vless_port}: {vless_users}")
-
-    print(f"Checking Shadowsocks port {shadowsocks_port}...")
-    shadowsocks_users = asyncio.run(get_connected_users(shadowsocks_port))
-    print(f"Number of users connected to Shadowsocks port {shadowsocks_port}: {shadowsocks_users}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 if __name__ == "__main__":
-    main()
+    uvicorn.run("main:app", host="0.0.0.0", port=54172, reload=True)

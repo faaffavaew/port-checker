@@ -1,19 +1,24 @@
-FROM python:3.10
+# Use the official Python image from the Docker Hub
+FROM python:3.11-slim
 
+# Set environment variables
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
-WORKDIR /opt/ports_checker
+# Set the working directory in the container
+WORKDIR /app
 
-RUN apt-get update && \
-    apt-get install -y \
-    curl \
-    software-properties-common
+# Copy the requirements file to the working directory
+COPY requirements.txt .
 
-RUN pip install --upgrade pip && \
-    pip install fastapi uvicorn
+# Install the dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY main.py /opt/ports_checker/main.py
+# Copy the entire contents of the local directory to the working directory in the container
+COPY . .
 
+# Expose the port the app runs on
 EXPOSE 54172
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "54172"]
+# Run the main.py file when the container launches
+CMD ["python", "main.py"]
