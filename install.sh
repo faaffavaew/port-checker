@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Variables
-REPO_URL="https://raw.githubusercontent.com/justusmisha/port-checker/main/main.py"
-DOCKER_COMPOSE_URL="https://raw.githubusercontent.com/justusmisha/port-checker/main/docker-compose.yml"
-DOCKERFILE_URL="https://raw.githubusercontent.com/justusmisha/port-checker/main/Dockerfile"
+REPO_URL="https://raw.githubusercontent.com/faaffavaew/port-checker/main/main.py"
+DOCKER_COMPOSE_URL="https://raw.githubusercontent.com/faaffavaew/port-checker/main/docker-compose.yml"
+DOCKERFILE_URL="https://raw.githubusercontent.com/faaffavaew/port-checker/main/Dockerfile"
 MAIN_PY_PATH="./main.py"
 DOCKER_COMPOSE_PATH="./docker-compose.yml"
 DOCKERFILE_PATH="./Dockerfile"
