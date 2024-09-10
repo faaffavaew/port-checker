@@ -1,31 +1,39 @@
 import asyncio
-import subprocess
 import os
-
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
 
+# Load environment variables from .env file
 load_dotenv()
 
+# Initialize FastAPI app
 app = FastAPI(docs_url=None, redoc_url=None)
 
+# Read environment variables
 SECRET_KEY = str(os.getenv("SECRET_KEY"))
 SS_PORT = int(os.getenv("SS_PORT"))
 VLESS_PORT = int(os.getenv("VLESS_PORT"))
 
 
 async def get_connected_users(port: int) -> int:
-    command = f"sudo netstat -tnp | grep ':{port}'"
+    """
+    Get the number of unique connected users on a specific port using 'ss' command.
+    :param port: The port number to check.
+    :return: Number of unique IP addresses connected.
+    """
+    # Используем ss вместо netstat для улучшенной производительности и точности
+    command = f"sudo ss -tan | grep ':{port} '"
     proc = await asyncio.create_subprocess_shell(
         command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
     )
     stdout, stderr = await proc.communicate()
 
+    # Check for errors
     if proc.returncode != 0:
-        print(f"No connections found on port {port}.")
+        print(f"Error or no connections found on port {port}: {stderr.decode().strip()}")
         return 0
 
     # Decode the output and split it into lines
@@ -41,8 +49,8 @@ async def get_connected_users(port: int) -> int:
     for line in lines:
         # Split the line and extract the remote IP address
         parts = line.split()
-        if len(parts) > 4:
-            remote_ip = parts[4].split(':')[0]
+        if len(parts) >= 5:
+            remote_ip = parts[4].split(':')[0]  # Extract IP address without port
             ip_addresses.add(remote_ip)
 
     return len(ip_addresses)
@@ -50,21 +58,28 @@ async def get_connected_users(port: int) -> int:
 
 @app.get("/get_usage/{key}")
 async def check_port(key: str):
+    """
+    API endpoint to check the number of connected users on specified ports.
+    :param key: Security key for authorization.
+    :return: Dictionary with port numbers and connected users count.
+    """
     if not key or key != SECRET_KEY:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid secret key.")
     try:
         response = {}
 
+        # Check VLESS port connections
         if VLESS_PORT:
             connected_users_v = await get_connected_users(VLESS_PORT)
             response[str(VLESS_PORT)] = connected_users_v
 
+        # Check Shadowsocks port connections
         if SS_PORT:
             connected_users_sh = await get_connected_users(SS_PORT)
             response[str(SS_PORT)] = connected_users_sh
 
         if not response:
-            return {'message': 'Specify valid ports.'}
+            return {'message': 'No valid ports provided for checking.'}
 
         return response
     except Exception as e:
