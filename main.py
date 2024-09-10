@@ -23,7 +23,7 @@ async def get_connected_users(port: int) -> int:
     :return: Number of unique IP addresses connected.
     """
     # Используем ss вместо netstat для улучшенной производительности и точности
-    command = f"sudo ss -tan | grep ':{port} '"
+    command = f"ss -tan | grep ':{port} '"
     proc = await asyncio.create_subprocess_shell(
         command,
         stdout=asyncio.subprocess.PIPE,

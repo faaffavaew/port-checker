@@ -8,11 +8,14 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Set the working directory in the container
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y iproute2
+
 # Copy the requirements file to the working directory
 COPY requirements.txt .
 
 # Install the dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+
 
 # Copy the entire contents of the local directory to the working directory in the container
 COPY . .
