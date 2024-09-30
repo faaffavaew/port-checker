@@ -22,7 +22,6 @@ async def get_connected_users(port: int) -> int:
     :param port: The port number to check.
     :return: Number of unique IP addresses connected.
     """
-    # Используем ss вместо netstat для улучшенной производительности и точности
     command = f"ss -tan | grep ':{port} '"
     proc = await asyncio.create_subprocess_shell(
         command,
@@ -31,28 +30,32 @@ async def get_connected_users(port: int) -> int:
     )
     stdout, stderr = await proc.communicate()
 
-    # Check for errors
     if proc.returncode != 0:
         print(f"Error or no connections found on port {port}: {stderr.decode().strip()}")
         return 0
 
-    # Decode the output and split it into lines
     lines = stdout.decode().splitlines()
 
-    # If no lines are found, log that no connections were found
     if not lines:
         print(f"No connections found on port {port}.")
         return 0
 
-    # Extract unique IP addresses
     ip_addresses = set()
     for line in lines:
-        # Split the line and extract the remote IP address
         parts = line.split()
-        if len(parts) >= 5:
-            remote_ip = parts[4].split(':')[0]  # Extract IP address without port
+        if len(parts) >= 1 and parts[0] == "ESTAB":
+            # Extract remote IP:port (it's the last column)
+            remote_ip_port = parts[-1]
+
+            # IPv6 addresses come enclosed in square brackets; IPv4 do not
+            if remote_ip_port.startswith('['):  # IPv6 address
+                remote_ip = remote_ip_port.split(']:')[0][1:]  # Remove '[' and split by ']:'
+            else:  # IPv4 address
+                remote_ip = remote_ip_port.split(':')[0]  # Extract IP part before the colon
+
             ip_addresses.add(remote_ip)
 
+    print("Connected ESTAB IPs:", ip_addresses)
     return len(ip_addresses)
 
 
