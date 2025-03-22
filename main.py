@@ -74,12 +74,12 @@ async def check_port(key: str):
         # Check VLESS port connections
         if VLESS_PORT:
             connected_users_v = await get_connected_users(VLESS_PORT)
-            response[str(VLESS_PORT)] = connected_users_v
+            response["VLESS"] = connected_users_v
 
         # Check Shadowsocks port connections
         if SS_PORT:
             connected_users_sh = await get_connected_users(SS_PORT)
-            response[str(SS_PORT)] = connected_users_sh
+            response["OUTLINE"] = connected_users_sh
 
         if not response:
             return {'message': 'No valid ports provided for checking.'}
