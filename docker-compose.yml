@@ -6,8 +6,6 @@ services:
       context: .
       dockerfile: Dockerfile
     network_mode: "host"
-    ports:
-      - "54172:54172"
     env_file:
       - .env
     restart: always
